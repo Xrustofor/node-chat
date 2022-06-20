@@ -5,11 +5,8 @@ const http = require('http');
 const { Server } = require('socket.io');
 const UserController = require('./controllers/user-controler')
 
-// const socketIO = require('socket.io');
-
 
 const sequelize = require('./utils/database');
-// const registry = require('./routes/registry');
 const cors = require('cors');
 
 const cookieParser = require('cookie-parser');
@@ -17,7 +14,6 @@ const router = require('./route/index.js')
 const errorMidleware = require('./middlewares/error-middleware');
 
 const path = require('path');
-// const keys = require('./keys');
 
 const PORT = process.env.PORT || 3000;
 
@@ -34,6 +30,15 @@ app.use(cookieParser());
 
 app.use('/api', router);
 app.use(errorMidleware);
+
+app.use(express.static('public', {
+  extensions: ['htm', 'html'],
+  index: false,
+}));
+
+app.use( async (req, res, next) => {
+  await res.sendFile(path.join(__dirname, 'public', 'index.html'));
+})
 
 const server = http.createServer(app);
 const io = new Server(server, {
